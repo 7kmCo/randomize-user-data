@@ -1,22 +1,35 @@
+
 add_action( 'init', 'fk_randomize_user_data' );
 function fk_randomize_user_data() {
     global $wpdb;
-    $table_name = $wpdb->prefix . 'esp_attendee_meta';
-    $selector_col = 'id';
-    $col_to_randomize = 'linked_email';
+    $table_name = $wpdb->prefix . 'users';
+    $selector_col = 'ID';
+    $col_to_randomize = 'user_email';
     $data_type = '';
 
-    fk_randomize_it( $table_name, $selector_col, $col_to_randomize, $data_type );
+    $exclude = array(
+        'field'     => 'user_login',
+        'values'    => array( 'perandre@gmail.com', 'foad@front.no' )
+    );
+    fk_randomize_it( $table_name, $selector_col, $col_to_randomize, $data_type, $exclude );
     
 }
 
-function fk_randomize_it( $table_name, $selector_col, $col_to_randomize, $data_type ) {
+function fk_randomize_it( $table_name, $selector_col, $col_to_randomize, $data_type, $exclude = array() ) {
     global $wpdb;
 
-    $records = $wpdb->get_results( "SELECT * FROM $table_name WHERE 1 = 1" );
+    $select_query = "SELECT * FROM $table_name";
+
+    if ( isset( $exclude ) && !empty( $exclude ) ) {
+        $exclude_values = implode( '\', \'', $exclude['values'] );
+        $select_query .= " WHERE {$exclude['field']} NOT IN ('{$exclude_values}')";
+    } else {
+        $select_query .= " WHERE 1 = 1";
+    }
+    $records = $wpdb->get_results( $select_query );
+
 
     foreach ($records as $record) {
-
         $random_email = fk_generate_randon_email();
 
         $wpdb->query("UPDATE $table_name SET 
