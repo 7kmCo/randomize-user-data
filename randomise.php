@@ -30,16 +30,32 @@ function fk_randomize_it( $table_name, $selector_col, $col_to_randomize, $data_t
 
 
     foreach ($records as $record) {
-        $random_email = fk_generate_randon_email();
+        switch ( $data_type ) {
+            case 'email':
+                $random_record = fk_generate_randon_email();
+                break;
+                
+            case 'name':
+            default:
+                $random_record = fk_generate_randon_name();
+                break;
+        }
 
         $wpdb->query("UPDATE $table_name SET 
-        $col_to_randomize = '{$random_email}'
+        $col_to_randomize = '{$random_record}'
         WHERE {$selector_col} = '{$record->$selector_col}'");
     }
     
 }
 
-function fk_generate_randon_email($max_len_local=6, $max_len_domain=5){
+function fk_generate_randon_name( $max_len = 6 ){
+    $alphabetic = 'abcdefghijklmnopqrstuvwxyz';
+    for ($i = 0; $i < $max_len; $i++) {
+        $random_name .= $alphabetic[rand(0, strlen($alphabetic) - 1)];
+    }
+}
+
+function fk_generate_randon_email( $max_len_local = 6, $max_len_domain = 5 ){
     $numeric        =  '0123456789';
     $alphabetic     = 'abcdefghijklmnopqrstuvwxyz';
     $tld_list       = array( 'co', 'no', 'com', 'org', 'io', 'net' );
