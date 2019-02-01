@@ -9,7 +9,7 @@ function fk_randomize_user_data() {
 
     $exclude = array(
         'field'     => 'user_login',
-        'values'    => array( 'perandre@gmail.com', 'foad@front.no' )
+        'values'    => array( 'email@gmail.com', 'foad@provider.no' )
     );
     fk_randomize_it( $table_name, $selector_col, $col_to_randomize, $data_type, $exclude );
     
